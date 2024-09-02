@@ -121,13 +121,13 @@ i18n.configure({
 });
 // Ping chính server để giữ cho nó không bị ngủ
 const interval = 5 * 60 * 1000; // 5 phút
-//
-// setInterval(() => {
-//   fetch('https://snaptikdownloader.onrender.com')
-//       .then(res => res.text())
-//       .then(text => console.log('Ping thành công:', text))
-//       .catch(err => console.error('Lỗi khi ping:', err));
-// }, interval);
+
+setInterval(() => {
+  fetch('https://snapgram.onrender.com')
+      .then(res => res.text())
+      .then(text => console.log('Ping thành công:', text))
+      .catch(err => console.error('Lỗi khi ping:', err));
+}, interval);
 
 
 var indexRouter = require('./routes/index');
