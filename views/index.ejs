@@ -380,10 +380,241 @@
             ]
         }
 </script>
-
 <script type="text/javascript">
-    function convertMilliseconds(e){return`${Math.floor(e/6e4)}:${Math.floor(e%6e4/1e3).toString().padStart(2,"0")}`}async function fetchFinalUrl(e){try{return(await fetch(e,{method:"HEAD"})).url}catch(e){throw console.error("Error fetching final URL:",e),e}}function extractFileName(e){return e.split("?")[0].split("/").pop()}async function downloadVideoBlob(e){try{const t=await fetchFinalUrl(e);console.log("Final URL:",t);const o=await fetch(t);if(!o.ok)throw new Error("Network response was not ok");const n=extractFileName(o.url);console.log(n);const l=await o.blob();console.log(l);const a=document.createElement("a");a.href=URL.createObjectURL(l),a.download=`${n}`,a.click(),URL.revokeObjectURL(a.href)}catch(e){console.error("Error downloading the video:",e)}}document.getElementById("loadButton").addEventListener("click",(async()=>{const e=document.getElementById("urlInput").value.trim();console.log(e);const t=document.getElementById("loading"),o=document.getElementById("container-content");if(o.innerHTML="",e){t.style.display="flex";try{const t=await fetch(`/download?urlBase=${encodeURIComponent(e)}`);if(console.log(t),!t.ok)throw new Error("Network response was not ok");const n=await t.json();if(console.log("data",n),"story"===n.result.type){console.log(n.result.media);for(const e of n.result.media){const t=document.createElement("video");t.classList.add("style-image-instagram"),t.controls=!0;const n=document.createElement("img");n.classList.add("style-image-instagram");const l=document.createElement("div");l.style.margin="10px",l.style.display="flex",l.style.flexDirection="column";const a=document.createElement("button");a.textContent="Download",a.classList.add("button-download");const c=document.createElement("button");c.textContent="Download Thumbnail",c.classList.add("button-download-thumbnail"),console.log(e);const i=e.listVideoVersion,s=e.listImageVersion;if(console.log("urlVideo",i),console.log("urlImage",s),void 0===i){console.log("urlVideo === undefined");try{const e=await fetch(`/proxy-image?url=${encodeURIComponent(s)}`),t=await e.blob(),c=new FileReader;c.readAsDataURL(t),c.onloadend=()=>{const e=c.result;n.src=e,a.onclick=()=>{const t=document.createElement("a");t.href=e,t.download="image.jpg",t.click()},l.appendChild(n),l.appendChild(a),o.appendChild(l)}}catch(e){console.error("Error fetching the image:",e)}}else{t.src=e.listVideoVersion,a.onclick=()=>{downloadVideoBlob(e.listVideoVersion)};try{const e=await fetch(`/proxy-image?url=${encodeURIComponent(s)}`),t=await e.blob(),o=new FileReader;o.readAsDataURL(t),o.onloadend=()=>{const e=o.result;c.onclick=()=>{const t=document.createElement("a");t.href=e,t.download="image.jpg",t.click()}}}catch(e){console.error("Error fetching the image:",e)}l.appendChild(t),l.appendChild(c),l.appendChild(a),o.appendChild(l)}}}else if(console.log("Post"),console.log(n.result.media.caption),null!==n.result.media.carouselMedia)for(const e of n.result.media.carouselMedia){const t=document.createElement("video");t.classList.add("style-image-instagram"),t.controls=!0;const n=document.createElement("img");n.classList.add("style-image-instagram");const l=document.createElement("button");l.textContent="Download",l.classList.add("button-download");const a=document.createElement("button");a.textContent="Download Thumbnail",a.classList.add("button-download-thumbnail");const c=document.createElement("div");c.style.margin="10px",c.style.display="flex",c.style.flexDirection="column",console.log("For",e),null===e.videoResources?(n.src=e.thumbnail,l.onclick=()=>{const t=document.createElement("a");t.href=e.thumbnail,t.download="image.jpg",t.click()},c.appendChild(n),c.appendChild(l),o.appendChild(c)):(t.src=e.videoResources[0].src,l.onclick=()=>{downloadVideoBlob(e.videoResources[0].src)},a.onclick=()=>{const t=document.createElement("a");t.href=e.thumbnail,t.download="image.jpg",t.click()},c.appendChild(t),c.appendChild(a),c.appendChild(l),o.appendChild(c))}else{const e=document.createElement("video");e.classList.add("style-image-instagram"),e.controls=!0,e.src=n.result.media.singleMedia.videoResources[0].src;const t=document.createElement("button");t.textContent="Download",t.classList.add("button-download"),t.onclick=()=>{downloadVideoBlob(n.result.media.singleMedia.videoResources[0].src)};const l=document.createElement("button");l.textContent="Download Thumbnail",l.classList.add("button-download-thumbnail"),l.onclick=()=>{const e=document.createElement("a");e.href=n.result.media.singleMedia.thumbnail,e.download="image.jpg",e.click()};const a=document.createElement("div");a.style.margin="10px",a.style.display="flex",a.style.flexDirection="column",a.appendChild(e),a.appendChild(l),a.appendChild(t),o.appendChild(a)}}catch(e){console.error("Error fetching the video:",e),alert("Lỗi khi tải video. Vui lòng kiểm tra URL.")}finally{t.style.display="none"}}else alert("Vui lòng nhập URL video TikTok.")})),document.getElementById("clear").addEventListener("click",(()=>{const e=document.getElementById("urlInput");""!==e.value&&(e.value="")})),document.getElementById("paste").addEventListener("click",(function(e){e.preventDefault(),navigator.clipboard.readText().then((e=>{""===e.trim()?console.log("Website không cho phép quyền paste."):document.getElementById("urlInput").value=e})).catch((e=>{"NotAllowedError"!==e.name&&console.error("Failed to read clipboard contents: ",e)}))}));const showMenu=(e,t)=>{const o=document.getElementById(e),n=document.getElementById(t),l=document.getElementById("createQr"),a=document.getElementById("loading2"),c=document.getElementById("img_default");o.addEventListener("click",(()=>{n.classList.toggle("show-menu"),l.style.position="initial",a.style.display="none",c.style.opacity=1,o.classList.toggle("show-icon"),console.log(typeof o.className),console.log(o.className),"nav__toggle"===o.className&&(c.style.opacity=.1)}))};showMenu("nav-toggle","nav-menu");const acc=document.getElementsByClassName("accordion");let i;for(i=0;i<acc.length;i++)acc[i].addEventListener("click",(function(){this.classList.toggle("active");const e=this.nextElementSibling;e.style.maxHeight?e.style.maxHeight=null:e.style.maxHeight=e.scrollHeight+"px"}));
+    async function fetchFinalUrl(url) {
+        try {
+            const response = await fetch(url, {method: "HEAD"});
+            return response.url; // Trả về URL cuối cùng sau khi chuyển hướng
+        } catch (error) {
+            console.error("Error fetching final URL:", error);
+            throw error;
+        }
+    }
+    function extractFileName(url) {
+        // Tách URL bằng ký tự '?', lấy phần trước dấu hỏi chấm
+        const urlParts = url.split('?')[0];
+        // Lấy phần cuối cùng của URL sau dấu '/'
+        const fileName = urlParts.split('/').pop();
+        return fileName;
+    }
+    async function downloadVideoBlob(videoUrl,buttonDownload) {
+        try {
+            buttonDownload.textContent = "Loading...."
+            const finalUrl = await fetchFinalUrl(videoUrl);
+            console.log("Final URL:", finalUrl);
+            const response = await fetch(finalUrl);
+            if (!response.ok) throw new Error("Network response was not ok");
+            const nameFileDownload = extractFileName(response.url)
+            console.log(nameFileDownload)
+            const blob = await response.blob();
+            console.log(blob)
+            const tempLink = document.createElement("a");
+            tempLink.href = URL.createObjectURL(blob);
+            tempLink.download = `${nameFileDownload}`;
+            tempLink.click();
+            // Giải phóng URL blob sau khi tải xong
+            // URL.revokeObjectURL(tempLink.href);
+        } catch (error) {
+            console.error("Error downloading the video:", error);
+        }finally {
+            buttonDownload.textContent = "Done"
+        }
+    }
+    // Hàm tạo chuỗi ngẫu nhiên
+    function generateRandomString() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 6; i++) { // độ dài của chuỗi ngẫu nhiên
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    document.getElementById('loadButton').addEventListener('click', async () => {
+        const videoUrl = document.getElementById('urlInput').value.trim();
+        console.log(videoUrl)
+        const loading = document.getElementById("loading");
+        const containerContent = document.getElementById("container-content")
+        containerContent.innerHTML = ""
+        if (!videoUrl) {
+            alert('Vui lòng nhập URL video TikTok.');
+            return;
+        }
+        loading.style.display = "flex";
+        try {
+            const response = await fetch(`/download?urlBase=${encodeURIComponent(videoUrl)}`)
+            console.log(response)
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            console.log("data", data)
+            if (data.result.type === "story") {
+                console.log(data.result.media)
+                for (const media of data.result.media) {
+                    const video = document.createElement("video")
+                    video.classList.add("style-image-instagram")
+                    video.controls = !0
+                    const image = document.createElement("img");
+                    image.classList.add("style-image-instagram")
+                    const container = document.createElement("div")
+                    container.style.margin = '10px'
+                    container.style.display = 'flex'
+                    container.style.flexDirection = 'column'
+                    const buttonDownload = document.createElement("button")
+                    buttonDownload.textContent = "Download"
+                    buttonDownload.classList.add("button-download")
+                    const buttonDownloadThumbnail = document.createElement("button")
+                    buttonDownloadThumbnail.textContent = "Download Thumbnail"
+                    buttonDownloadThumbnail.classList.add("button-download-thumbnail")
+                    console.log(media)
+                    const urlVideo = media.listVideoVersion;
+                    const urlImage = media.listImageVersion;
+                    console.log("urlVideo", urlVideo)
+                    console.log("urlImage", urlImage)
+                    if (urlVideo === undefined) {
+                        console.log("urlVideo === undefined")
+                        try {
+                            // Tải ảnh qua server-side proxy
+                            const response = await fetch(`/proxy-image?url=${encodeURIComponent(urlImage)}`);
+                            const blob = await response.blob();
+                            // Chuyển đổi blob thành Base64
+                            const reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = () => {
+                                const base64data = reader.result;
+                                image.src = base64data;
+                                buttonDownload.onclick = () => {
+                                    const tempLink = document.createElement("a")
+                                    tempLink.href = base64data
+                                    tempLink.download = `image${generateRandomString()}.jpg`
+                                    tempLink.click()
+                                }
+                                container.appendChild(image);
+                                container.appendChild(buttonDownload)
+                                containerContent.appendChild(container)
+                            };
+                        } catch (error) {
+                            console.error('Error fetching the image:', error);
+                        }
+                    } else {
+                        video.src = media.listVideoVersion
+                        buttonDownload.onclick = () => {
+                            downloadVideoBlob(media.listVideoVersion,buttonDownload)
+                        }
+                        try {
+                            // Tải ảnh qua server-side proxy
+                            const response = await fetch(`/proxy-image?url=${encodeURIComponent(urlImage)}`);
+                            const blob = await response.blob();
+                            // Chuyển đổi blob thành Base64
+                            const reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = () => {
+                                const base64data = reader.result;
+                                buttonDownloadThumbnail.onclick = () => {
+                                    const tempLink = document.createElement("a")
+                                    tempLink.href = base64data
+                                    tempLink.download = `image${generateRandomString()}.jpg`
+                                    tempLink.click()
+                                }
+                            };
+                        } catch (error) {
+                            console.error('Error fetching the image:', error);
+                        }
+                        container.appendChild(video);
+                        container.appendChild(buttonDownloadThumbnail)
+                        container.appendChild(buttonDownload)
+                        containerContent.appendChild(container)
+                    }
+                }
+            } else {
+                console.log("Post")
+                console.log(data.result.media.caption)
+                if (data.result.media.carouselMedia !== null) {
+                    for (const media of data.result.media.carouselMedia) {
+                        const video = document.createElement("video")
+                        video.classList.add("style-image-instagram")
+                        video.controls = !0
+                        const image = document.createElement("img");
+                        image.classList.add("style-image-instagram")
+                        const buttonDownload = document.createElement("button")
+                        buttonDownload.textContent = "Download"
+                        buttonDownload.classList.add("button-download")
+                        const buttonDownloadThumbnail = document.createElement("button")
+                        buttonDownloadThumbnail.textContent = "Download Thumbnail"
+                        buttonDownloadThumbnail.classList.add("button-download-thumbnail")
+                        const container = document.createElement("div")
+                        container.style.margin = '10px'
+                        container.style.display = 'flex'
+                        container.style.flexDirection = 'column'
+                        console.log("For", media)
+                        if (media.videoResources === null) {
+                            image.src = media.thumbnail
+                            buttonDownload.onclick = () => {
+                                const a = document.createElement("a")
+                                a.href = media.thumbnail
+                                a.download = `image${generateRandomString()}.jpg`
+                                a.click()
+                            }
+                            container.appendChild(image)
+                            container.appendChild(buttonDownload)
+                            containerContent.appendChild(container)
+                        } else {
+                            video.src = media.videoResources[0].src
+                            buttonDownload.onclick = () => {
+                                downloadVideoBlob(media.videoResources[0].src,buttonDownload)
+                            }
+                            buttonDownloadThumbnail.onclick = () => {
+                                const a = document.createElement("a")
+                                a.href = media.thumbnail
+                                a.download = `image${generateRandomString()}.jpg`
+                                a.click()
+                            }
+                            container.appendChild(video)
+                            container.appendChild(buttonDownloadThumbnail)
+                            container.appendChild(buttonDownload)
+                            containerContent.appendChild(container)
+                        }
+                    }
+                } else {
+                    const video = document.createElement("video")
+                    video.classList.add("style-image-instagram")
+                    video.controls = !0
+                    video.src = data.result.media.singleMedia.videoResources[0].src
+                    const buttonDownload = document.createElement("button")
+                    buttonDownload.textContent = "Download"
+                    buttonDownload.classList.add("button-download")
+                    buttonDownload.onclick = () => {
+                        downloadVideoBlob(data.result.media.singleMedia.videoResources[0].src,buttonDownload)
+                    }
+                    const buttonDownloadThumbnail = document.createElement("button")
+                    buttonDownloadThumbnail.textContent = "Download Thumbnail"
+                    buttonDownloadThumbnail.classList.add("button-download-thumbnail")
+                    buttonDownloadThumbnail.onclick = () => {
+                        const a = document.createElement("a")
+                        a.href = data.result.media.singleMedia.thumbnail
+                        a.download = `image${generateRandomString()}.jpg`
+                        a.click()
+                    }
+                    const container = document.createElement("div")
+                    container.style.margin = '10px'
+                    container.style.display = 'flex'
+                    container.style.flexDirection = 'column'
+                    container.appendChild(video)
+                    container.appendChild(buttonDownloadThumbnail)
+                    container.appendChild(buttonDownload)
+                    containerContent.appendChild(container)
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching the video:', error);
+            alert('Lỗi khi tải video. Vui lòng kiểm tra URL.');
+        } finally {
+            loading.style.display = "none";
+        }
+    });
+    document.getElementById("clear").addEventListener("click",(()=>{const e=document.getElementById("urlInput");""!==e.value&&(e.value="")})),document.getElementById("paste").addEventListener("click",(function(e){e.preventDefault(),navigator.clipboard.readText().then((e=>{""===e.trim()?console.log("Website không cho phép quyền paste."):document.getElementById("urlInput").value=e})).catch((e=>{"NotAllowedError"!==e.name&&console.error("Failed to read clipboard contents: ",e)}))}));const showMenu=(e,t)=>{const n=document.getElementById(e),l=document.getElementById(t),o=document.getElementById("createQr"),c=document.getElementById("loading2"),s=document.getElementById("img_default");n.addEventListener("click",(()=>{l.classList.toggle("show-menu"),o.style.position="initial",c.style.display="none",s.style.opacity=1,n.classList.toggle("show-icon"),console.log(typeof n.className),console.log(n.className),"nav__toggle"===n.className&&(s.style.opacity=.1)}))};showMenu("nav-toggle","nav-menu");const acc=document.getElementsByClassName("accordion");let i;for(i=0;i<acc.length;i++)acc[i].addEventListener("click",(function(){this.classList.toggle("active");const e=this.nextElementSibling;e.style.maxHeight?e.style.maxHeight=null:e.style.maxHeight=e.scrollHeight+"px"}));
 </script>
+
+
 
 </body>
 </html>
