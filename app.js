@@ -120,7 +120,7 @@ i18n.configure({
     header: 'accept-language'
 });
 // Ping chính server để giữ cho nó không bị ngủ
-const interval = 40 * 60 * 1000; // 5 phút
+const interval = 20 * 60 * 1000; // 5 phút
 
 setInterval(() => {
   fetch('https://instasnap.onrender.com')
