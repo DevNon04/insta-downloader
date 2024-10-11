@@ -175,7 +175,6 @@ router.get('/download', async function (req, res, next) {
         } else {
             const browser = await puppeteer.launch({
                 headless: true, // Chế độ headless
-                executablePath: '/path/to/chrome',
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
             const page = await browser.newPage();
