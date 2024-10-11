@@ -8,7 +8,6 @@ const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
 const apiPost = "https://sssinstagram.com/api/convert"
 const http = require('http');
-const {chromium} = require('playwright');
 const puppeteer = require('puppeteer');
 /* GET home page. */
 // router.get('/', function (req, res, next) {
