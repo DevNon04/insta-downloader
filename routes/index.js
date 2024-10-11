@@ -171,7 +171,7 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            const browser = await chromium.launch({
+            const browser = await puppeteer.launch({
                 headless: true, // Chế độ headless
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
@@ -179,7 +179,7 @@ router.get('/download', async function (req, res, next) {
             // Điều hướng đến trang sssinstagram
             await page.goto('https://sssinstagram.com');
             // Nhập URL của video vào ô input
-            await page.fill('#input', urlBase);
+            await page.type('#input', urlBase);
 
             // Bắt sự kiện khi có một request POST đến endpoint /api/convert
             const [response] = await Promise.all([
