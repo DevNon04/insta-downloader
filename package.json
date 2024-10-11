@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "install": "playwright install"
+    "install": "playwright install",
+    "postinstall": "apt-get update && apt-get install -y libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libenchant-2-2 libsecret-1-0 libmm-glib0 libgles2 --no-install-recommends && rm -rf /var/lib/apt/lists/*"
   },
   "dependencies": {
     "axios": "^1.7.5",
