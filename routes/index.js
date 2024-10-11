@@ -8,8 +8,10 @@ const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
 const apiPost = "https://sssinstagram.com/api/convert"
 const http = require('http');
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const { chromium} = require('playwright');
+
 /* GET home page. */
 // router.get('/', function (req, res, next) {
 //     res.render('index', {title: 'Express'});
@@ -173,6 +175,7 @@ router.get('/download', async function (req, res, next) {
         } else {
             const browser = await puppeteer.launch({
                 headless: true, // Chế độ headless
+                executablePath: '/path/to/chrome',
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
             const page = await browser.newPage();
