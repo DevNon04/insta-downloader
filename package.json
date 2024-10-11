@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "install": "playwright install"
+    "install": "playwright install --with-deps"
   },
   "dependencies": {
     "axios": "^1.7.5",
