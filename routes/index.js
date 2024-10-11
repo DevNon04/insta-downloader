@@ -6,9 +6,9 @@ const axios = require("axios")
 const https = require("https");
 const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
+const apiPost = "https://sssinstagram.com/api/convert"
 const http = require('http');
-
-
+const {chromium} = require('playwright');
 /* GET home page. */
 // router.get('/', function (req, res, next) {
 //     res.render('index', {title: 'Express'});
@@ -34,6 +34,7 @@ function extractInstagramCode(url) {
 }
 
 const NodeCache = require('node-cache');
+const url = require("node:url");
 const imageCache = new NodeCache({stdTTL: 600, checkperiod: 120});
 
 router.get('/proxy-image', async (req, res) => {
@@ -169,49 +170,75 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            // Handle other cases
-            const postId = extractInstagramCode(urlBase);
-            console.log(postId)
-            // const urlDone = `${cleanedURL}?__a=1&__d=dis`;
-            const url = `https://www.instagram.com/p/${postId}/?__a=1&__d=dis`;
-            console.log(url)
-            const {data} = await axios({
-                url,
+            const browser = await chromium.launch({
+                headless: true, // Chế độ headless
             });
-            console.log(data)
-            console.log(data.graphql.shortcode_media.edge_sidecar_to_children)
-            // console.log("data.graphql.shortcode_media.edge_sidecar_to_children.edges", data.graphql.shortcode_media.edge_sidecar_to_children.edges)
-            let listDisplay = []
-            if (data.graphql.shortcode_media.edge_sidecar_to_children === undefined) {
-                listDisplay.push({
-                    listImageVersion: data.graphql.shortcode_media.display_url,
-                    listVideoVersion: data.graphql.shortcode_media.video_url,
-                })
+            const page = await browser.newPage();
+            // Điều hướng đến trang sssinstagram
+            await page.goto('https://sssinstagram.com');
+            // Nhập URL của video vào ô input
+            await page.fill('#input', urlBase);
+
+            // Bắt sự kiện khi có một request POST đến endpoint /api/convert
+            const [response] = await Promise.all([
+                page.waitForResponse(response => response.url().includes('/api/convert') && response.request().method() === 'POST'),
+                page.click('.form__submit') // Nhấn nút "Download"
+            ]);
+            const responseData = await response.json()
+            console.log("responseData", responseData)
+
+            const listMedia = []
+            let listImageVersion = undefined
+            let listVideoVersion = undefined
+            if (Array.isArray(responseData) === false) {
+                console.log(true)
+                if (responseData.url[0].type === 'mp4') {
+                    listVideoVersion = responseData.url[0].url
+                    listImageVersion = responseData.thumb
+                } else {
+                    listImageVersion = responseData.url[0].url
+                }
+                const media = {
+                    listImageVersion,
+                    listVideoVersion
+                }
+                listMedia.push(media)
             } else {
-                data.graphql.shortcode_media.edge_sidecar_to_children.edges.forEach((node) => {
-                    console.log("forEach: ", node.node.display_url)
-                    if (node.node.__typename === "GraphImage") {
-                        listDisplay.push({
-                            listImageVersion: node.node.display_url
-                        })
+                responseData.forEach((item) => {
+                    // console.log("item forEach: ", item)
+                    console.log("item forEach: ", item.url[0].type)
+
+
+                    if (item.url[0].type !== 'mp4') {
+                        console.log("item.url[0].url_image", item.url[0].url)
+                        listImageVersion = item.url[0].url
                     } else {
-                        listDisplay.push(
-                            {
-                                listImageVersion: node.node.display_url,
-                                listVideoVersion: node.node.video_url
-                            }
-                        )
+                        console.log("item.url[0].url_video", item.url[0].url)
+                        console.log("item.thumb", item.thumb)
+                        listVideoVersion = item.url[0].url
+                        listImageVersion = item.thumb
                     }
+                    const media = {
+                        listImageVersion,
+                        listVideoVersion
+                    }
+                    listMedia.push(media)
                 })
             }
+
+            console.log(listMedia)
+
+
+            // Đóng trình duyệt
+            await browser.close();
+
+
             res.status(200).json({
-                // data:data,
                 result: {
                     type: "post",
-                    media: listDisplay
+                    media: listMedia
                 }
             })
-
         }
     } catch (e) {
         console.log(e)
@@ -221,9 +248,6 @@ router.get('/download', async function (req, res, next) {
         })
     }
 })
-
-
-
 
 
 // router.get('/download', async function (req, res, next) {
