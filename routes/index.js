@@ -9,6 +9,7 @@ const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight
 const apiPost = "https://sssinstagram.com/api/convert"
 const http = require('http');
 const {chromium} = require('playwright');
+const puppeteer = require('puppeteer');
 /* GET home page. */
 // router.get('/', function (req, res, next) {
 //     res.render('index', {title: 'Express'});
@@ -170,14 +171,14 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            const browser = await chromium.launch({
+            const browser = await puppeteer.launch({
                 headless: true, // Chế độ headless
             });
             const page = await browser.newPage();
             // Điều hướng đến trang sssinstagram
             await page.goto('https://sssinstagram.com');
             // Nhập URL của video vào ô input
-            await page.fill('#input', urlBase);
+            await page.type('#input', urlBase);
 
             // Bắt sự kiện khi có một request POST đến endpoint /api/convert
             const [response] = await Promise.all([
