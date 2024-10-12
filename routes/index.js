@@ -36,6 +36,7 @@ function extractInstagramCode(url) {
 const NodeCache = require('node-cache');
 const url = require("node:url");
 const {json} = require("express");
+const test = require("node:test");
 const imageCache = new NodeCache({stdTTL: 600, checkperiod: 120});
 
 router.get('/proxy-image', async (req, res) => {
@@ -171,57 +172,40 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            const data = {
-                video_url: `${urlBase}`,
-                type: "instagram",
-            };
+            const { igdl } = require('ruhend-scraper')
+             //https://instagram.com/xxxxxxx
 
-            axios
-                .post(apiPost, data, {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                        "Cookie": "cf_clearance=y1TOJkMYBurQZ59G0ANRrZYmI0TmCoVjm_VwsY85sHs-1728716791-1.2.1.1-Bz716yQq_Xpzj7Ys19Zs.zSIayJzWNpGowK_ym_f3s2CxjUT9uXjKQ10nwHXhquK0RWXGhcaDam7Cy0HHCmznV6THSlwH9eSiZjxAFJ12fpphRVx3oKTkBTXrOStkI1Y7k6V.yxG4bZeBsfGQAeP.o38aWw6OcWevXMn4aYvF12AreiUee7HSoD149ISzJzsd9qLw9PfzzTKb1jUhIAI6uVnbRtA4o3mDCHVEzhOyqSXQc3qpsspzlQHShDudctkcr6egy9kRtowW_1QD8athnEWALPbJhx17QHOcV0zWp6wr97YaMS5oGOIjXqTxmZA8yECghF1ME41Eh8WA600W4RnzA.euD4VYBFGwniwJSslf68_NyeoFf9RlLFe_Imh",
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
-                        "Referer": "https://apihut.in/Video%20Downloader%20App/live-demo",
-                        "Origin": "https://apihut.in"
-                    }
-                })
-                .then((response) => {
-                    console.log("Response:", response.data);
-                    const listMedia = []
-                    let listImageVersion = undefined
-                    let listVideoVersion = undefined
-                    let media = undefined
-                    const uniqueUrls = [...new Set(response.data.data.map(item => item.url))];
-                    console.log(uniqueUrls)
-                    uniqueUrls.forEach(item => {
-                        console.log("item", item)
-                        if (item.includes("https://d.rapidcdn.app/d?token=")) {
-                            listVideoVersion = item
-                        } else {
-                            listImageVersion = item
-                        }
-                        media = {
-                            listImageVersion,
-                            listVideoVersion
-                        }
-                        listMedia.push(media)
-                    })
+            let response = await igdl(urlBase);
+            console.log(response)
 
-                    console.log(listMedia)
-                    res.status(200).json({
-                        result: {
-                            type: "post",
-                            media: listMedia
-                        }
-                    })
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Response:", response.data);
+            const listMedia = []
+            let listImageVersion = undefined
+            let listVideoVersion = undefined
+            let media = undefined
+            const uniqueUrls = [...new Set(response.data.map(item => item.url))];
+            console.log(uniqueUrls)
+            uniqueUrls.forEach(item => {
+                console.log("item", item)
+                if (item.includes("https://d.rapidcdn.app/d?token=")) {
+                    listVideoVersion = item
+                } else {
+                    listImageVersion = item
+                }
+                media = {
+                    listImageVersion,
+                    listVideoVersion
+                }
+                listMedia.push(media)
+            })
 
-
+            console.log(listMedia)
+            res.status(200).json({
+                result: {
+                    type: "post",
+                    media: listMedia
+                }
+            })
 
 
 
