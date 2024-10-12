@@ -6,7 +6,7 @@ const axios = require("axios")
 const https = require("https");
 const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
-const apiPost = "https://ssinsta.app/core/ajax.php"
+const apiPost = "https://apihut.in/api/download/videos";
 const http = require('http');
 
 /* GET home page. */
@@ -171,50 +171,54 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            const url = "https://apihut.in/api/download/videos";
             const data = {
-                type: "instagram",
                 video_url: `${urlBase}`,
+                type: "instagram",
             };
-            const proxy = {
-                host: '143.42.66.91',  // IP của VPS bạn
-                port: 80,  // Cổng Squid (mặc định là 3128)
-            };
-            const response = await axios.post(url, data, {
-                headers:header,
-                httpsAgent: agent,
-                proxy:proxy
-            })
 
-            // console.log("Response:", response.data);
-            console.log("Response:", response.data.data);
-            const listMedia = []
-            let listImageVersion = undefined
-            let listVideoVersion = undefined
-            let media = undefined
-            const uniqueUrls = [...new Set(response.data.data.map(item => item.url))];
-            console.log(uniqueUrls)
-            uniqueUrls.forEach(item => {
-                console.log("item", item)
-                if (item.includes("https://d.rapidcdn.app/d?token=")) {
-                    listVideoVersion = item
-                } else {
-                    listImageVersion = item
-                }
-                media = {
-                    listImageVersion,
-                    listVideoVersion
-                }
-                listMedia.push(media)
-            })
+            axios
+                .post(apiPost, data, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((response) => {
+                    console.log("Response:", response.data);
+                    const listMedia = []
+                    let listImageVersion = undefined
+                    let listVideoVersion = undefined
+                    let media = undefined
+                    const uniqueUrls = [...new Set(response.data.data.map(item => item.url))];
+                    console.log(uniqueUrls)
+                    uniqueUrls.forEach(item => {
+                        console.log("item", item)
+                        if (item.includes("https://d.rapidcdn.app/d?token=")) {
+                            listVideoVersion = item
+                        } else {
+                            listImageVersion = item
+                        }
+                        media = {
+                            listImageVersion,
+                            listVideoVersion
+                        }
+                        listMedia.push(media)
+                    })
 
-            console.log(listMedia)
-            res.status(200).json({
-                result: {
-                    type: "post",
-                    media: listMedia
-                }
-            })
+                    console.log(listMedia)
+                    res.status(200).json({
+                        result: {
+                            type: "post",
+                            media: listMedia
+                        }
+                    })
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
+
+
 
 
             // const listMedia = []
