@@ -181,7 +181,11 @@ router.get('/download', async function (req, res, next) {
                     headers: {
                         Accept: "application/json",
                         "Content-Type": "application/json",
-                    },
+                        "Cookie": "cf_clearance=y1TOJkMYBurQZ59G0ANRrZYmI0TmCoVjm_VwsY85sHs-1728716791-1.2.1.1-Bz716yQq_Xpzj7Ys19Zs.zSIayJzWNpGowK_ym_f3s2CxjUT9uXjKQ10nwHXhquK0RWXGhcaDam7Cy0HHCmznV6THSlwH9eSiZjxAFJ12fpphRVx3oKTkBTXrOStkI1Y7k6V.yxG4bZeBsfGQAeP.o38aWw6OcWevXMn4aYvF12AreiUee7HSoD149ISzJzsd9qLw9PfzzTKb1jUhIAI6uVnbRtA4o3mDCHVEzhOyqSXQc3qpsspzlQHShDudctkcr6egy9kRtowW_1QD8athnEWALPbJhx17QHOcV0zWp6wr97YaMS5oGOIjXqTxmZA8yECghF1ME41Eh8WA600W4RnzA.euD4VYBFGwniwJSslf68_NyeoFf9RlLFe_Imh",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+                        "Referer": "https://apihut.in/Video%20Downloader%20App/live-demo",
+                        "Origin": "https://apihut.in"
+                    }
                 })
                 .then((response) => {
                     console.log("Response:", response.data);
