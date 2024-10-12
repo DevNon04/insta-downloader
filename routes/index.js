@@ -180,7 +180,18 @@ router.get('/download', async function (req, res, next) {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
+                    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7,fr-FR;q=0.6,fr;q=0.5",
+                    "Cookie": "cf_clearance=y1TOJkMYBurQZ59G0ANRrZYmI0TmCoVjm_VwsY85sHs-1728716791-1.2.1.1-Bz716yQq_Xpzj7Ys19Zs.zSIayJzWNpGowK_ym_f3s2CxjUT9uXjKQ10nwHXhquK0RWXGhcaDam7Cy0HHCmznV6THSlwH9eSiZjxAFJ12fpphRVx3oKTkBTXrOStkI1Y7k6V.yxG4bZeBsfGQAeP.o38aWw6OcWevXMn4aYvF12AreiUee7HSoD149ISzJzsd9qLw9PfzzTKb1jUhIAI6uVnbRtA4o3mDCHVEzhOyqSXQc3qpsspzlQHShDudctkcr6egy9kRtowW_1QD8athnEWALPbJhx17QHOcV0zWp6wr97YaMS5oGOIjXqTxmZA8yECghF1ME41Eh8WA600W4RnzA.euD4VYBFGwniwJSslf68_NyeoFf9RlLFe_Imh",
+                    "Origin": "https://apihut.in",
+                    "Referer": "https://apihut.in/Video%20Downloader%20App/live-demo",
+                    "Sec-Ch-Ua": `"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"`,
+                    "Sec-Ch-Ua-Mobile": "?0",
+                    "Sec-Ch-Ua-Platform": `"Windows"`,
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
                 },
             })
 
