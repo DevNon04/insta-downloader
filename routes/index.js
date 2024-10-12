@@ -6,11 +6,11 @@ const axios = require("axios")
 const https = require("https");
 const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
-const apiPost = "https://sssinstagram.com/api/convert"
+const apiPost = "https://ssinsta.app/core/ajax.php"
 const http = require('http');
 // const puppeteer = require('puppeteer');
 const puppeteer = require('puppeteer-core');
-const { chromium} = require('playwright');
+const {chromium} = require('playwright');
 
 /* GET home page. */
 // router.get('/', function (req, res, next) {
@@ -38,6 +38,7 @@ function extractInstagramCode(url) {
 
 const NodeCache = require('node-cache');
 const url = require("node:url");
+const {json} = require("express");
 const imageCache = new NodeCache({stdTTL: 600, checkperiod: 120});
 
 router.get('/proxy-image', async (req, res) => {
@@ -173,76 +174,98 @@ router.get('/download', async function (req, res, next) {
             })
 
         } else {
-            const browser = await puppeteer.launch({
-                headless: true, // Chế độ headless
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-            });
-            const page = await browser.newPage();
-            // Điều hướng đến trang sssinstagram
-            await page.goto('https://sssinstagram.com');
-            // Nhập URL của video vào ô input
-            await page.type('#input', urlBase);
-
-            // Bắt sự kiện khi có một request POST đến endpoint /api/convert
-            const [response] = await Promise.all([
-                page.waitForResponse(response => response.url().includes('/api/convert') && response.request().method() === 'POST'),
-                page.click('.form__submit') // Nhấn nút "Download"
-            ]);
-            const responseData = await response.json()
-            console.log("responseData", responseData)
-
-            const listMedia = []
-            let listImageVersion = undefined
-            let listVideoVersion = undefined
-            if (Array.isArray(responseData) === false) {
-                console.log(true)
-                if (responseData.url[0].type === 'mp4') {
-                    listVideoVersion = responseData.url[0].url
-                    listImageVersion = responseData.thumb
-                } else {
-                    listImageVersion = responseData.url[0].url
-                }
-                const media = {
-                    listImageVersion,
-                    listVideoVersion
-                }
-                listMedia.push(media)
-            } else {
-                responseData.forEach((item) => {
-                    // console.log("item forEach: ", item)
-                    console.log("item forEach: ", item.url[0].type)
-
-
-                    if (item.url[0].type !== 'mp4') {
-                        console.log("item.url[0].url_image", item.url[0].url)
-                        listImageVersion = item.url[0].url
+            const url = "https://apihut.in/api/download/videos";
+            const data = {
+                video_url: `${urlBase}`,
+                type: "instagram",
+            };
+            axios.post(url, data, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+            }).then((response) => {
+                // console.log("Response:", response.data);
+                console.log("Response:", response.data.data);
+                const listMedia = []
+                let listImageVersion = undefined
+                let listVideoVersion = undefined
+                let media = undefined
+                const uniqueUrls = [...new Set(response.data.data.map(item => item.url))];
+                console.log(uniqueUrls)
+                uniqueUrls.forEach(item => {
+                    console.log("item", item)
+                    if (item.includes("https://d.rapidcdn.app/d?token=")) {
+                        listVideoVersion = item
                     } else {
-                        console.log("item.url[0].url_video", item.url[0].url)
-                        console.log("item.thumb", item.thumb)
-                        listVideoVersion = item.url[0].url
-                        listImageVersion = item.thumb
+                        listImageVersion = item
                     }
-                    const media = {
+                    media = {
                         listImageVersion,
                         listVideoVersion
                     }
                     listMedia.push(media)
                 })
-            }
 
-            console.log(listMedia)
+                console.log(listMedia)
+                res.status(200).json({
+                    result: {
+                        type: "post",
+                        media: listMedia
+                    }
+                })
+            }).catch((error) => {
+                console.error("Error:", error);
+            });
+
+            // const listMedia = []
+            // let listImageVersion = undefined
+            // let listVideoVersion = undefined
+            // if (Array.isArray(responseData) === false) {
+            //     console.log(true)
+            //     if (responseData.url[0].type === 'mp4') {
+            //         listVideoVersion = responseData.url[0].url
+            //         listImageVersion = responseData.thumb
+            //     } else {
+            //         listImageVersion = responseData.url[0].url
+            //     }
+            //     const media = {
+            //         listImageVersion,
+            //         listVideoVersion
+            //     }
+            //     listMedia.push(media)
+            // } else {
+            //     responseData.forEach((item) => {
+            //         // console.log("item forEach: ", item)
+            //         console.log("item forEach: ", item.url[0].type)
+            //
+            //
+            //         if (item.url[0].type !== 'mp4') {
+            //             console.log("item.url[0].url_image", item.url[0].url)
+            //             listImageVersion = item.url[0].url
+            //         } else {
+            //             console.log("item.url[0].url_video", item.url[0].url)
+            //             console.log("item.thumb", item.thumb)
+            //             listVideoVersion = item.url[0].url
+            //             listImageVersion = item.thumb
+            //         }
+            //         const media = {
+            //             listImageVersion,
+            //             listVideoVersion
+            //         }
+            //         listMedia.push(media)
+            //     })
+            // }
+            //
+            // console.log(listMedia)
 
 
-            // Đóng trình duyệt
-            await browser.close();
-
-
-            res.status(200).json({
-                result: {
-                    type: "post",
-                    media: listMedia
-                }
-            })
+            // res.status(200).json({
+            //     result: {
+            //         type: "post",
+            //         media: listMedia
+            //     }
+            // })
         }
     } catch (e) {
         console.log(e)
