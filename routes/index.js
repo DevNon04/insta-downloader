@@ -8,9 +8,6 @@ const apiStory = "https://sssinstagram.com/api/ig/story"
 const apiHighlight = "https://sssinstagram.com/api/ig/highlightStories/highlight:"
 const apiPost = "https://ssinsta.app/core/ajax.php"
 const http = require('http');
-// const puppeteer = require('puppeteer');
-const puppeteer = require('puppeteer-core');
-const {chromium} = require('playwright');
 
 /* GET home page. */
 // router.get('/', function (req, res, next) {
