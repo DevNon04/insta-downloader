@@ -176,9 +176,14 @@ router.get('/download', async function (req, res, next) {
                 type: "instagram",
                 video_url: `${urlBase}`,
             };
+            const proxy = {
+                host: '143.42.66.91',  // IP của VPS bạn
+                port: 80,  // Cổng Squid (mặc định là 3128)
+            };
             const response = await axios.post(url, data, {
                 headers:header,
-                httpsAgent: agent
+                httpsAgent: agent,
+                proxy:proxy
             })
 
             // console.log("Response:", response.data);
