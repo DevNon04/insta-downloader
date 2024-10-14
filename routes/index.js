@@ -206,57 +206,6 @@ router.get('/download', async function (req, res, next) {
                     media: listMedia
                 }
             })
-
-
-
-            // const listMedia = []
-            // let listImageVersion = undefined
-            // let listVideoVersion = undefined
-            // if (Array.isArray(responseData) === false) {
-            //     console.log(true)
-            //     if (responseData.url[0].type === 'mp4') {
-            //         listVideoVersion = responseData.url[0].url
-            //         listImageVersion = responseData.thumb
-            //     } else {
-            //         listImageVersion = responseData.url[0].url
-            //     }
-            //     const media = {
-            //         listImageVersion,
-            //         listVideoVersion
-            //     }
-            //     listMedia.push(media)
-            // } else {
-            //     responseData.forEach((item) => {
-            //         // console.log("item forEach: ", item)
-            //         console.log("item forEach: ", item.url[0].type)
-            //
-            //
-            //         if (item.url[0].type !== 'mp4') {
-            //             console.log("item.url[0].url_image", item.url[0].url)
-            //             listImageVersion = item.url[0].url
-            //         } else {
-            //             console.log("item.url[0].url_video", item.url[0].url)
-            //             console.log("item.thumb", item.thumb)
-            //             listVideoVersion = item.url[0].url
-            //             listImageVersion = item.thumb
-            //         }
-            //         const media = {
-            //             listImageVersion,
-            //             listVideoVersion
-            //         }
-            //         listMedia.push(media)
-            //     })
-            // }
-            //
-            // console.log(listMedia)
-
-
-            // res.status(200).json({
-            //     result: {
-            //         type: "post",
-            //         media: listMedia
-            //     }
-            // })
         }
     } catch (e) {
         console.log(e)
